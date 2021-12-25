@@ -40,19 +40,20 @@ dependencies {
 processResources {
     from(sourceSets.main.resources.srcDirs) {
         include 'mcmod.info'
-        expand 'version': project.version,
-                'mod_id': properties.mod_id,
-                'mod_name': properties.mod_name,
-                'mod_author': properties.mod_author,
-                'mod_description': properties.mod_description,
-                'mc_version': properties.mc_version,
-                'mod_version': properties.mod_version,
-                'mod_credits': properties.mod_credits
+        expand 'version': version,
+                'mod_id': project.mod_id,
+                'mod_name': project.mod_name,
+                'mod_author': project.mod_author,
+                'mod_description': project.mod_description,
+                'mc_version': project.mc_version,
+                'mod_version': project.mod_version,
+                'mod_credits': project.mod_credits
     }
+
     // copy everything else, thats not the mcmod.info
-    from(sourceSets.main.resources.srcDirs) {
-        exclude 'mcmod.info'
-    }
+	from(sourceSets.main.resources.srcDirs) {
+		exclude 'mcmod.info'
+	}
 }
 
 task devJar(type: Jar) {
