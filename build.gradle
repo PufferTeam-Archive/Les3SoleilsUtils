@@ -1,0 +1,79 @@
+buildscript {
+    repositories {
+        mavenCentral()
+        maven {
+            name = "juanmuscaria"
+            url = "https://github.com/juanmuscaria/maven/raw/master"
+        }
+    }
+    dependencies {
+        classpath 'net.minecraftforge.gradle:ForgeGradle:[1.2-1.4.5-SNAPSHOT,)'
+        classpath 'com.integral.grimoire:GrimoireShenanigans:[1.5.3,)'
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'forge'
+apply plugin: 'grimoire-shenanigans'
+apply plugin: 'idea'
+
+version = "1.0"
+group="fr.minemobs" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+archivesBaseName = "les3soleilsutils"
+
+[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8'
+
+
+minecraft {
+    version = "1.7.10-10.13.4.1614-1.7.10"
+    runDir = "eclipse"
+    replace "@VERSION@", version
+    //accessTransformer(file("src/main/resources/META-INF/access_transformer.cfg"))
+}
+
+dependencies {
+    runtimeOnly fileTree(dir: 'libs', include: ['*.jar'])
+}
+
+
+processResources {
+    from(sourceSets.main.resources.srcDirs) {
+        include 'mcmod.info'
+        expand 'version': project.version,
+                'mod_id': properties.mod_id,
+                'mod_name': properties.mod_name,
+                'mod_author': properties.mod_author,
+                'mod_description': properties.mod_description,
+                'mc_version': properties.mc_version,
+                'mod_version': properties.mod_version,
+                'mod_credits': properties.mod_credits
+    }
+    // copy everything else, thats not the mcmod.info
+    from(sourceSets.main.resources.srcDirs) {
+        exclude 'mcmod.info'
+    }
+}
+
+task devJar(type: Jar) {
+    archiveClassifier.set('dev')
+    from sourceSets.main.output
+}
+
+task sourcesJar(type: Jar) {
+    archiveClassifier.set('sources')
+    from sourceSets.main.allSource
+}
+
+reobf {
+    addExtraSrgFile project.mixinSrg
+}
+
+jar {
+    appendix project.minecraft.version
+}
+
+artifacts {
+    archives devJar
+    archives sourcesJar
+}
