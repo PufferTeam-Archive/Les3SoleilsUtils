@@ -25,10 +25,7 @@ public class ClientProxy extends CommonProxy {
     public void init(FMLInitializationEvent event) {
         super.init(event);
         ServerList serverList = new ServerList(Minecraft.getMinecraft());
-        List<ServerData> serverDatas = getServers(serverList);
-        if(serverDatas == null) {
-            return;
-        }
+        List<ServerData> serverDatas = Objects.requireNonNull(getServers(serverList));
         ServerData data = new ServerData("Les3Soleils V5.5", FEATURED_SERVER, false);
         if(serverDatas.stream().anyMatch(serverData -> serverData.serverIP.equals(FEATURED_SERVER))) {
             Les3SoleilsUtils.LOGGER.info("The server already exists");
@@ -41,12 +38,7 @@ public class ClientProxy extends CommonProxy {
     @SuppressWarnings("unchecked")
     @Nullable
     private List<ServerData> getServers(ServerList list) {
-        try {
-            return (List<ServerData>) FieldUtils.getField(ServerList.class, "servers", true).get(list);
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        }
-        return null;
+        return ((ServerListMixin) list).getServers();
     }
 
     public void postInit(FMLPostInitializationEvent event) {
